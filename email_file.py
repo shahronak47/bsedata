@@ -12,7 +12,7 @@ def read_credentials () :
 
     return content
 
-def sendEmail(content) :
+def sendEmail(content, sensex_obj) :
     doc = read_credentials()
     #Get the credentials from the yaml file
     gmail_user = doc['gmail_client']
@@ -20,11 +20,18 @@ def sendEmail(content) :
     To = doc['To']
     FROM = gmail_user
     data = content
+    diff = sensex_obj.diff.split()[0]
+    sensex_index = sensex_obj.bse_index
     #Generate the html body for the email
     html = """
     <html><body><p>Hello Ronak, </p>
     <p>Here is your data:</p>
+    Today's BSE index is : """ + sensex_index + """  """ + diff + """
+    <br>
     {table}
+    <br>
+    You have bought shares worth : """ + str(content['Amount'].sum()) + """
+    and it's current valuation is : """ + str(content['Profit'].sum()) + """
     <p>Regards,</p>
     <p>Ronak Shah</p>
     </body></html>
@@ -47,5 +54,5 @@ def sendEmail(content) :
         return False
 
 
-def email_main(df) :
-   isSuccessfull = sendEmail(df)
+def email_main(df, sensex_obj) :
+   isSuccessfull = sendEmail(df, sensex_obj)
